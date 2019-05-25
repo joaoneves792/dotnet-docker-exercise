@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace dotnet_exercise
 {
@@ -31,6 +32,10 @@ namespace dotnet_exercise
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.Configure<KestrelServerOptions>(options => 
+            {
+                options.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(1.0);
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
