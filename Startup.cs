@@ -58,7 +58,7 @@ namespace dotnet_exercise
             app.UseCookiePolicy();
 
             app.UseMvc(routes =>{
-                routes.MapRoute("/", "{controller}/{action}", defaults: new { controller = "HelloDocker", action = "Index" });
+                routes.MapRoute("/", "{**key}", defaults: new { controller = "HelloDocker", action = "Index" });
             });
         }
     }

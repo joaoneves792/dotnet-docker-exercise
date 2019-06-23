@@ -20,6 +20,10 @@ namespace dotnet_exercise
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration( (context, builder) =>
+                {
+                    builder.AddEtcdProvider("appsettings.json");
+                })
                 .UseKestrel(options => {
                     options.Listen(IPAddress.Any, 8080); //HTTP port
                 }).UseStartup<Startup>();
