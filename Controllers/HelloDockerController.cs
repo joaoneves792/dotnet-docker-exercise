@@ -39,7 +39,7 @@ namespace MvcMovie.Controllers
                 enumerator.MoveNext();
                 string value = enumerator.Current.Value.ToStringUtf8();
 
-                ViewData["Message"] = "etcd says:" + value;
+                ViewData["Message"] = "endpoint is:" + _configuration["endpoint"]  + " etcd says: " + value;
             }catch(Exception e){
                 ViewData["Message"] = e.ToString();
             }

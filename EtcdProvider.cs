@@ -45,7 +45,7 @@ namespace dotnet_exercise
 
     public class EtcdProvider : JsonConfigurationProvider
     {
-        private readonly string tokenPattern = @"\${([a-zA-Z0-9-_]+)}";
+        private readonly string tokenPattern = @"\${([a-zA-Z0-9-_/]+)}";//Example: ${foo}
 
         public EtcdProvider(Microsoft.Extensions.Configuration.Json.JsonConfigurationSource source) : base(source)
         {
@@ -60,7 +60,7 @@ namespace dotnet_exercise
 
             RepeatedField<Mvccpb.KeyValue> kvs = response.Kvs;
             IEnumerator<Mvccpb.KeyValue> enumerator = kvs.GetEnumerator();
-            enumerator.MoveNext();
+            enumerator.MoveNext(); //We only get the first
             string value = enumerator.Current.Value.ToStringUtf8();
 
             return value;
@@ -68,10 +68,13 @@ namespace dotnet_exercise
 
         public override void Load()
         {
-            base.Load();
-            foreach (KeyValuePair<string, string> entry in Data)
+            base.Load();//Make sure we load the json first
+
+
+            List<string> keys = new List<string>(Data.Keys);
+            foreach (string key in keys)
             {
-                MatchCollection matches = Regex.Matches(entry.Value, tokenPattern);
+                MatchCollection matches = Regex.Matches(Data[key], tokenPattern);
                 if (matches.Count == 0)
                     continue;
 
@@ -83,16 +86,17 @@ namespace dotnet_exercise
                     {
                         try
                         {
-                            etcdValue = retrieveValue(etcdKey, "etcd", 2379);
+                            etcdValue = retrieveValue(etcdKey, "etcd", 2379);//TODO Load the endpoint from the json
                         }
                         catch (Exception e) //Catch'em all
                         {
+                            //The etcd servers can be down, or their database might not have been filled yet
                             Console.WriteLine("etcd token resolution error: " + e.Message);
                             Thread.Sleep(1000);
                         }
                     }
 
-                    Console.WriteLine(etcdKey + " : " + etcdValue);
+                    Data[key] = Data[key].Replace(match.Value, etcdValue);
                 }
                 
             }
