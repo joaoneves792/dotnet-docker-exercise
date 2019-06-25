@@ -15,7 +15,19 @@ else
         echo "Detected new ADVERTISE_URLS value of $ADVERTISE_URLS"
 fi
 
-ETCD_CMD="/bin/etcd -data-dir=/data --advertise-client-urls=${ADVERTISE_URLS} -listen-client-urls=${LISTEN_URLS} $*"
-echo -e "Running '$ETCD_CMD'\nBEGIN ETCD OUTPUT\n"
 
-exec $ETCD_CMD
+/bin/etcd -data-dir=/data --name etcd --advertise-client-urls=${ADVERTISE_URLS} -listen-client-urls=${LISTEN_URLS} $* &
+pid=$!
+
+jsonAsPath(){
+	jq -r '. as $root | path(..) | . as $path | $root | getpath($path) as $value | select($value | scalars) | ([$path[]] | join("/")) + (" " + $value)' $1
+}
+
+env=/etc/vision/$ENVIRONMENT.json
+jsonAsPath $env | while read input; do
+	until etcdctl put $input; do
+		sleep 1
+	done
+done
+
+wait $pid

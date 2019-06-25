@@ -1,0 +1,16 @@
+{
+	"foo" : {
+		"foo" : "bar",
+		"oof" : "rab"
+	},
+	"url" : "vision.vortal.biz",
+	"public" : {
+		"endpoint" : {
+			"dns": "public.vision.vortal.biz",
+			"port": "443"
+		}
+	},
+	"directory" : {
+		"endpoint" : "directory.vision.vortal.biz"
+	}
+}

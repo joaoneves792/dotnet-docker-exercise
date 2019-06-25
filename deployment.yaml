@@ -1,0 +1,19 @@
+version: "3.4"
+
+services:
+  helloDocker:
+    image: example
+    deploy:
+      replicas: 1 
+    ports:
+      - 8080:8080
+
+  etcd:
+    image: etcd
+    environment:  
+      - ENVIRONMENT=dev
+    #  - ADVERTISE_URLS=http://etcd:2380
+    #  - LISTEN_URLS=http://etcd:2379
+    volumes:
+      - type: tmpfs
+        target: /data
