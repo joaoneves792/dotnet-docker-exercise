@@ -2,5 +2,5 @@ FROM        alpine:edge
 EXPOSE      2379
 RUN         apk add --update \
                 socat
-ENTRYPOINT  ["/bin/sh", "-c", "exec socat TCP-LISTEN:2379,fork TCP:real_etcd:2379"]
+ENTRYPOINT  ["/bin/sh", "-c", "exec socat TCP-LISTEN:$PORT,fork TCP:$ENDPOINT:$PORT"]
 
