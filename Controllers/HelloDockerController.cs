@@ -28,7 +28,7 @@ namespace MvcMovie.Controllers
             EtcdClient client = new EtcdClient("etcd", 2379);
             Etcdserverpb.RangeResponse response;
             if (key == null)
-                response = client.Get("foo");
+                response = client.Get("/foo/foo");
             else
                 response = client.Get(key);
 
@@ -39,13 +39,13 @@ namespace MvcMovie.Controllers
                 enumerator.MoveNext();
                 string value = enumerator.Current.Value.ToStringUtf8();
 
-                ViewData["Message"] = "endpoint is:" + _configuration["endpoint"]  + " etcd says: " + value;
+                ViewData["Message"] = "etcd says: " + value;
             }catch(Exception e){
                 ViewData["Message"] = e.ToString();
             }
             IHttpConnectionFeature feature = HttpContext.Features.Get<IHttpConnectionFeature>();
             ViewData["IP"] = feature.LocalIpAddress.ToString();
-            ViewData["Config"] = _configuration["Foo"];
+            ViewData["Config"] = _configuration["somewhere"];
 
             client.Put("visited", feature.LocalIpAddress.ToString());
 

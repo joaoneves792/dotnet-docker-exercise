@@ -20,7 +20,7 @@ fi
 pid=$!
 
 jsonAsPath(){
-	jq -r '. as $root | path(..) | . as $path | $root | getpath($path) as $value | select($value | scalars) | ([$path[]] | join("/")) + (" " + $value)' $1
+	jq -r '. as $root | path(..) | . as $path | $root | getpath($path) as $value | select($value | scalars) | ("/") + ([$path[]] | join("/")) + (" " + $value)' $1
 }
 
 env=/etc/vision/$ENVIRONMENT.json
